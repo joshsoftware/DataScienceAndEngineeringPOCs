@@ -1,0 +1,39 @@
+{
+    "submissions": [
+        {
+            "id": "1",
+            "problem_statement": "The Hamming distance between two integers is the number of positions at which the corresponding bits are different.\n\nGiven two integers x and y, return the Hamming distance between them.\n\nExample 1:\n\nInput: x = 1, y = 4\nOutput: 2\nExplanation:\n1   (0 0 0 1)\n4   (0 1 0 0)\n   ↑   ↑\nThe above arrows point to positions where the corresponding bits are different.\nExample 2:\n\nInput: x = 3, y = 1\nOutput: 1\n\nConstraints:\n\n0 <= x, y <= 231 - 1",
+            "source_code": "class Solution {\\npublic:\\n    int hammingDistance(int x, int y) {\\n        int bit_count = x ^ y ;\\n        return __builtin_popcount(bit_count);\\n    }   \\n};",
+            "language": "cpp",
+            "difficulty_level": "easy"
+        },
+        {
+            "id": "2",
+            "problem_statement": "You are given a 0-indexed integer array nums of even length consisting of an equal number of positive and negative integers.\\n\\nYou should return the array of nums such that the the array follows the given conditions:\\n\\nEvery consecutive pair of integers have opposite signs.\\nFor all integers with the same sign, the order in which they were present in nums is preserved.\\nThe rearranged array begins with a positive integer.\\nReturn the modified array after rearranging the elements to satisfy the aforementioned conditions.\\n\\n\\nExample 1:\\n\\nInput: nums = [3,1,-2,-5,2,-4]\\nOutput: [3,-2,1,-5,2,-4]\\nExplanation:\\nThe positive integers in nums are [3,1,2]. The negative integers are [-2,-5,-4].\\nThe only possible way to rearrange them such that they satisfy all conditions is [3,-2,1,-5,2,-4].\\nOther ways such as [1,-2,2,-5,3,-4], [3,1,2,-2,-5,-4], [-2,3,-5,1,-4,2] are incorrect because they do not satisfy one or more conditions.  \\nExample 2:\\n\\nInput: nums = [-1,1]\\nOutput: [1,-1]\\nExplanation:\\n1 is the only positive integer and -1 the only negative integer in nums.\\nSo nums is rearranged to [1,-1].\\n\\n\\nConstraints:\\n\\n2 <= nums.length <= 2 * 105\\nnums.length is even\\n1 <= |nums[i]| <= 105\\nnums consists of equal number of positive and negative integers.\\n\\n\\nIt is not required to do the modifications in-place.",
+            "source_code": "class Solution {\\npublic:\\n    vector<int> rearrangeArray(vector<int>& nums) {\\n        int posIndex=0,negIndex=1;\\n        vector<int>ans(nums.size(),0);\\n        for(int i=0;i<nums.size();i++){\\n            if(nums[i]>0){\\n                ans[posIndex]=nums[i];\\n                posIndex+=2;\\n            }else{\\n                ans[negIndex]=nums[i];\\n                negIndex+=2;\\n            }\\n        }\\n        return ans;\\n    }\\n};",
+            "language": "cpp",
+            "difficulty_level": "medium"
+        },
+        {
+            "id": "3",
+            "problem_statement": "Given an array nums of size n, return the majority element.\\n\\nThe majority element is the element that appears more than ⌊n / 2⌋ times. You may assume that the majority element always exists in the array.\\n\\n\\nExample 1:\\n\\nInput: nums = [3,2,3]\\nOutput: 3\\nExample 2:\\n\\nInput: nums = [2,2,1,1,1,2,2]\\nOutput: 2\\n\\n\\nConstraints:\\n\\nn == nums.length\\n1 <= n <= 5 * 104\\n-109 <= nums[i] <= 109",
+            "source_code": "class Solution {\\npublic:\\nint majorityElement(vector<int>& nums) {\\n        int el=nums[0];\\n        int ctr = 0;\\n        for(auto i:nums){\\n            if(ctr==0){\\n                ctr=1;\\n                el=i;\\n            }\\n            else if(i==el){\\n                ctr++;\\n            }else{\\n                ctr--;\\n            }\\n        }\\n        return el;\\n    }\\n};",
+            "language": "cpp",
+            "difficulty_level": "easy"
+        },
+        {
+            "id": "4",
+            "problem_statement": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\\n\\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\\n\\nYou can return the answer in any order.\\n\\n\\nExample 1:\\n\\nInput: nums = [2,7,11,15], target = 9\\nOutput: [0,1]\\nExplanation: Because nums[0] + nums[1] == 9, we return [0, 1].\\nExample 2:\\n\\nInput: nums = [3,2,4], target = 6\\nOutput: [1,2]\\nExample 3:\\n\\nInput: nums = [3,3], target = 6\\nOutput: [0,1]\\n\\n\\nConstraints:\\n\\n2 <= nums.length <= 104\\n-109 <= nums[i] <= 109\\n-109 <= target <= 109\\nOnly one valid answer exists.",
+            "source_code": "class Solution:\\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\\n        hashmap = {}\\n        for index, value in enumerate(nums):\\n            if target - value in hashmap:\\n                return [hashmap[target - value], index]\\n            hashmap[value] = index",
+            "language": "python",
+            "difficulty_level": "easy"
+        },
+        {
+            "id": "5",
+            "problem_statement": "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.\\n\\nNote that you must do this in-place without making a copy of the array.\\n\\n\\nExample 1:\\n\\nInput: nums = [0,1,0,3,12]\\nOutput: [1,3,12,0,0]\\nExample 2:\\n\\nInput: nums = [0]\\nOutput: [0]\\n\\n\\nConstraints:\\n\\n1 <= nums.length <= 104\\n-231 <= nums[i] <= 231 - 1",
+            "source_code": "class Solution {\\n    public void moveZeroes(int[] nums) {\\n        if(nums == null || nums.length == 0) return;\\n        \\n        int cur = 0;\\n        for(int i = 0; i < nums.length; i++){\\n            if(nums[i] != 0){\\n                int tmp = nums[cur];\\n                nums[cur] = nums[i];\\n                nums[i] = tmp;\\n                cur++;\\n            }\\n        }\\n    }\\n}",
+            "language": "java",
+            "difficulty_level": "easy"
+        }
+    ]
+}
