@@ -1,0 +1,4 @@
+flask
+python-dotenv
+os-sys
+qdrant-client
