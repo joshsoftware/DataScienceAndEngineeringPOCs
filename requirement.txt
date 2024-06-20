@@ -1,4 +1,11 @@
 flask
 python-dotenv
 os-sys
+PyPDF2
+jsonify
 qdrant-client
+llama-index==0.10.32
+llama-index-core==0.10.32
+llama-index-embeddings-fastembed==0.1.4
+llama-index-vector-stores-qdrant==0.2.8
+accelerate==0.29.3
