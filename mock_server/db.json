@@ -36,13 +36,10 @@
       "difficulty_level": "medium"
     },
     {
-      "submission_id": "34",
+      "id": "34",
       "submitted_code": "#include<bits/stdc++.h>\r\nusing namespace std;\r\n\r\nint solve(string str){\r\n\r\n    int count = 0;\r\n    for(int i = 0; i < str.length(); i++){\r\n        if(str[i] == 'a' || str[i] == 'e' || str[i] == 'i' || str[i] == 'o' || str[i] == 'u') count++;\r\n    }\r\n\r\n    return count;\r\n}\r\n\r\nint vowelsCount(string str){\r\n\r\n    int count = 0;\r\n    for(int i = 0; i < str.length(); i++){\r\n        for(int j = i; j < str.length(); j++){\r\n            count += solve(str.substr(i, j - i + 1));\r\n        }\r\n    }\r\n    return count;\r\n}\r\n\r\nint main() {\r\n    string str;\r\n    cin >> str;\r\n\r\n    cout << vowelsCount(str);\r\n}\r\n",
-    
       "problem_statement": "Print the total amount of vowels ('a', 'e', I 'o', and 'u') in each substring of a word given as a string.\n\nA contiguous (non-empty) group of characters within a string is referred to as a substring.\n\nNote: The solution might not fit in a signed 32-bit integer due to the severe limitations. During the calculations, kindly use caution.\n\nExample 1:\n\nInput: abc\nOutput: 3\nExplanation: \nAll possible substrings are: \"a\", \"ab\", \"abc\", \"b\", \"bc\", and \"c\".\n- \"a\", \"ab\", and \"abc\" have 1 vowel each\n- \"b\", \"bc\", and \"c\" have 0 vowels each\nHence, the total sum of vowels = 1 + 1 + 1 + 0 + 0 + 0 = 3.\n\nExample 2:\n\nInput: ltcd\nOutput: 0\nExplanation: There are no vowels in any substring of \"ltcd\".\n \n\nConstraints:\n\n1 <= word.length <= 105\nword consists of lowercase English letters.",
-    
       "language": "C++ (GCC 9.2.0)",
-    
       "difficulty_level": "easy"
     }
   ]

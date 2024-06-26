@@ -1,16 +1,42 @@
 import requests
 import json
+import hmac
+import hashlib
+import base64
+import time
+import os
+from dotenv import load_dotenv
 
-#submission ids
-submission_ids = [22, 24, 37, 30, 34, 43]
+# Load environment variables from .env file
+load_dotenv()
 
-# Flask app url
-flask_app_url = 'http://127.0.0.1:5000'
+def generate_signature(secret_key, method, path, data):
+    timestamp = str(int(time.time()))
+    message = f"{method}{path}{timestamp}{json.dumps(data, separators=(',', ':'))}"
+    signature = base64.urlsafe_b64encode(
+        hmac.new(secret_key.encode(), message.encode(), hashlib.sha256).digest()
+    ).decode()
+    return signature, timestamp
 
+# Submission IDs
+submission_ids = [43, 22, 24, 37, 30, 34]
+
+# Flask app URL
+flask_app_url = os.getenv("FLASK_APP_URL")
 submission_route = '/submissions_ids'
 
-headers = {'Content-Type': 'application/json'}
+# Set your secret key here
+secret_key = os.getenv("HMAC_KEY")
+
 data = {'submission_ids': submission_ids, 'drive_id': '110'}
+signature, timestamp = generate_signature(secret_key, 'POST', submission_route, data)
+
+# Construct headers
+headers = {
+    'Content-Type': 'application/json',
+    'X-SIGNATURE': signature,
+    'X-TIMESTAMP': timestamp
+}
 
 try:
     response = requests.post(f"{flask_app_url}{submission_route}", json=data, headers=headers)
