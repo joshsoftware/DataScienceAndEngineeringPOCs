@@ -150,10 +150,6 @@ Failed URLs are logged but don't stop the crawling process.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Acknowledgments
 
 - Beautiful Soup for HTML parsing
