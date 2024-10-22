@@ -33,20 +33,11 @@ A robust and configurable web crawler that systematically browses and extracts c
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/web-crawler.git
-cd web-crawler
+git clone git@github.com:joshsoftware/chatbot.ai.git
+cd data_source/webscraper
 ```
 
-2. Create and activate a virtual environment (recommended):
-```bash
-python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On Unix or MacOS
-source venv/bin/activate
-```
-
-3. Install required packages:
+2. Install required packages:
 ```bash
 pip install -r requirements.txt
 ```
