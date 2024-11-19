@@ -257,7 +257,7 @@ class WebCrawler:
         """Save the crawled data to files."""
         domain = urlparse(self.base_url).netloc
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        output_dir = domain+"/"+timestamp
+        output_dir = "scrap_dump/" + domain
         
         # Create the output directory
         os.makedirs(output_dir, exist_ok=True)
@@ -266,8 +266,8 @@ class WebCrawler:
         metadata = self.prepare_metadata()
         
         # Save metadata
-        metadata_filename = os.path.join(output_dir, 'Result_'+timestamp+'.json')
-        with open(metadata_filename, 'r+', encoding='utf-8') as f:
+        metadata_filename = os.path.join(output_dir, 'Result_'+domain+'.json')
+        with open(metadata_filename, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=4, ensure_ascii=False)
 
         # Save content = Code to save data in text format (if req. uncomment the code) 
@@ -304,12 +304,21 @@ class WebCrawler:
         print(f"Processed {len(self.visited_urls)} pages")
         print(f"Maximum depth reached: {max(depth_stats.keys()) if depth_stats else 0}")
         print(f"Results saved to: {output_dir}")
+        
+        return {
+            "websiteUrl" : self.base_url,
+            "websiteDepth": self.depth,
+            "websiteMaxNumberOfPages": self.max_pages,
+            "lastScrapedDate": timestamp,
+            "filePath": output_dir
+        }
 
-if __name__ == "__main__":
-    base_url = input("Enter the base URL to crawl: ")
-    depth = int(input("Enter the crawl depth (1-10): "))
-    max_pages = int(input("Enter the maximum number of pages to crawl: "))
 
-    crawler = WebCrawler(base_url, depth=depth, max_pages=max_pages)
-    crawler.crawl()
-    crawler.save_results()
+# if __name__ == "__main__":
+#     base_url = input("Enter the base URL to crawl: ")
+#     depth = int(input("Enter the crawl depth (1-10): "))
+#     max_pages = int(input("Enter the maximum number of pages to crawl: "))
+
+#     crawler = WebCrawler(base_url, depth=depth, max_pages=max_pages)
+#     crawler.crawl()
+#     crawler.save_results()
