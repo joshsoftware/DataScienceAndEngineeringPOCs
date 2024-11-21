@@ -16,8 +16,6 @@ class RAG:
     """Performing sentence segmentation."""
     segmentation = GenerateSentenceSegmentation(self.file_content)
     self.segmented_data = segmentation.generate_sentence_segmentation()
-    print(self.segmented_data)
-    print(len(self.segmented_data))
 
     # Create Embaddings
     embeddings = CreateEmbeddings(self.segmented_data)
@@ -26,6 +24,7 @@ class RAG:
     # insert embedding into PGVector
 
 # RAG()
+# This is just for testing, and will be removed in future
 if __name__ == '__main__':
-  rag = RAG("/home/ue/Documents/AI_ML/practice/text.txt")
+  rag = RAG("D:\Programming\spacyText.txt")
   rag.run_RAG()
