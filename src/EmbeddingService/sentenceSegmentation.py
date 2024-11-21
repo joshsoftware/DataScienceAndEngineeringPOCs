@@ -7,14 +7,11 @@ class GenerateSentenceSegmentation:
   def generate_sentence_segmentation(self):
     nlp = spacy.load('en_core_web_sm')
     doc = nlp(self.file_content)
-    print("doc: ", doc)
-    newA = []
-    s = ""
+    sentenceArray = []
+    tempSentence = ""
     for token in doc:
-      s = s + token.text + " " if not token.text.__contains__("\n") else s
+      tempSentence = tempSentence + token.text + " " if not token.text.__contains__("\n") else tempSentence
       if token.is_sent_end and token.text != "\n":
-        # print("newLine")
-        newA.append(s.strip())
-        s = ""
-    # print(newA)
-    return newA
+        sentenceArray.append(tempSentence.strip())
+        tempSentence = ""
+    return sentenceArray

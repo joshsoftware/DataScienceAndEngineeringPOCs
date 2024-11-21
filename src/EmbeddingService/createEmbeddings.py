@@ -12,17 +12,18 @@ class CreateEmbeddings:
   
   def generate_embeddings(self):
     # The path of your model after cloning it
-    model_dir = os.getenv('MODEL_DIR')
+    MODEL_DIR = os.getenv('MODEL_DIR')
 
-    vector_dim = os.getenv('VECTOR_DIM')
-    vector_linear_directory = f"2_Dense_{vector_dim}"
+    VECTOR_DIM = os.getenv('VECTOR_DIM')
+    vector_linear_directory = f"2_Dense_{VECTOR_DIM}"
 
-    model = AutoModel.from_pretrained(model_dir, trust_remote_code=True).eval()
-    tokenizer = AutoTokenizer.from_pretrained(model_dir, trust_remote_code=True)
-    vector_linear = torch.nn.Linear(in_features=model.config.hidden_size, out_features=vector_dim)
+    model = AutoModel.from_pretrained(MODEL_DIR, trust_remote_code=True).eval()
+
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, trust_remote_code=True)
+    vector_linear = torch.nn.Linear(in_features=model.config.hidden_size, out_features=VECTOR_DIM)
     vector_linear_dict = {
         k.replace("linear.", ""): v for k, v in
-        torch.load(os.path.join(model_dir, f"{vector_linear_directory}/pytorch_model.bin")).items()
+        torch.load(os.path.join(MODEL_DIR, f"{vector_linear_directory}/pytorch_model.bin")).items()
     }
     vector_linear.load_state_dict(vector_linear_dict)
     vector_linear
