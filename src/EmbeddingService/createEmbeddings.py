@@ -13,8 +13,9 @@ class CreateEmbeddings:
   def generate_embeddings(self):
     # The path of your model after cloning it
     MODEL_DIR = os.getenv('MODEL_DIR')
-
-    VECTOR_DIM = os.getenv('VECTOR_DIM')
+    VECTOR_DIM = int(os.getenv('VECTOR_DIM'))
+    DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+    
     vector_linear_directory = f"2_Dense_{VECTOR_DIM}"
 
     model = AutoModel.from_pretrained(MODEL_DIR, trust_remote_code=True).eval()
@@ -23,7 +24,7 @@ class CreateEmbeddings:
     vector_linear = torch.nn.Linear(in_features=model.config.hidden_size, out_features=VECTOR_DIM)
     vector_linear_dict = {
         k.replace("linear.", ""): v for k, v in
-        torch.load(os.path.join(MODEL_DIR, f"{vector_linear_directory}/pytorch_model.bin")).items()
+        torch.load(os.path.join(MODEL_DIR, f"{vector_linear_directory}/pytorch_model.bin"), map_location=torch.device(DEVICE)).items()
     }
     vector_linear.load_state_dict(vector_linear_dict)
     vector_linear
