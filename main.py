@@ -1,12 +1,17 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
 from data_source.webscraper.index import WebCrawler
 from db.index import create_db_and_tables, UserSession
 from pydantic import BaseModel, Field, HttpUrl
 from contextlib import asynccontextmanager
 from db.actions.vectors import get_similar_vectors
 from db.actions.web_scrapper import list_webscraps, save_webscrap
+from llm.OllamaService import ollama_client
+from llm.ChatHistory import ChatHistory
+import json
 
-from typing import List
+
+from typing import List, AsyncGenerator
 class ScrapModel(BaseModel):
     base_url: HttpUrl = Field(..., example="https://example.com")
     depth: int = Field(..., ge=1, le=10, example=3)
@@ -15,6 +20,9 @@ class ScrapModel(BaseModel):
 class VectorQueryModel(BaseModel):
     query_vector: List[float] = Field(..., example=[0.1, 0.2, 0.3])
     top_k: int = Field(5, example=5)
+    
+class ChatModel(BaseModel):
+    message: str = Field(..., example="Hello, Ollama!")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,3 +47,45 @@ async def scrap_website(scrap_model: ScrapModel, session: UserSession):
     data = crawler.save_results()
     save_webscrap(data, session)
     return {"message": "Crawling completed successfully"}
+
+@app.post("/chat")
+async def chat_endpoint(request: ChatModel, session: UserSession):
+    async def response_stream() -> AsyncGenerator[bytes, None]:
+        buffer = ""
+        async for chunk in ollama_client(request.message, session):
+            if chunk and 'message' in chunk and 'content' in chunk['message']:
+                # Accumulate content in buffer
+                buffer += chunk['message']['content']
+                # If we have a complete word or punctuation, yield it
+                if buffer.endswith((' ', '.', '!', '?', '\n')):
+                    response_json = {
+                        "content": buffer,
+                        "isFinished": False
+                    }
+                    yield f"{json.dumps(response_json)}\n".encode('utf-8')
+                    buffer = ""
+
+        # Yield any remaining content with isFinished flag
+        if buffer:
+            response_json = {
+                "content": buffer,
+                "isFinished": True
+            }
+            yield f"{json.dumps(response_json)}\n".encode('utf-8')
+        else:
+            # Send final empty message with isFinished flag if buffer is empty
+            response_json = {
+                "content": "",
+                "isFinished": True
+            }
+            yield f"{json.dumps(response_json)}\n".encode('utf-8')
+
+    return StreamingResponse(
+        response_stream(),
+        media_type="application/x-ndjson",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Transfer-Encoding": "chunked"
+        }
+    )
