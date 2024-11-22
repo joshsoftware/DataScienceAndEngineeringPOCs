@@ -1,8 +1,6 @@
 from db.schema import ScrapData
 from db.index import UserSession
-from typing import Annotated
-from fastapi import Query
-from sqlmodel import select
+
 
 def save_webscrap(data: dict, session: UserSession) -> ScrapData:   
     scrap_data = ScrapData(
@@ -17,13 +15,3 @@ def save_webscrap(data: dict, session: UserSession) -> ScrapData:
     session.commit()
     session.refresh(scrap_data)
     return scrap_data
-
-def list_webscraps(
-    session: UserSession,
-    offset: int = 0,
-    limit: Annotated[int, Query(le=100)] = 100,
-) -> list[ScrapData]:
-    heroes = session.exec(select(ScrapData).offset(offset).limit(limit)).all()
-    return heroes
-
-    
