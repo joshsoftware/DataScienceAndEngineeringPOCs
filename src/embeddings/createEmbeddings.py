@@ -92,14 +92,11 @@ async def get_embeddings_transformer(sentences: list) -> list[list[float]]:
 
 # Function to process and store embeddings
 async def process_sentences_and_store(
-    sentences: list[str], org_meta: dict, session: UserSession
+    sentences: list[str], org_id: int, session: UserSession
 ) -> int:
     
     if not sentences:
         raise ValueError("No sentences provided for embedding.")
-        
-    if not org_meta or 'id' not in org_meta:
-        raise ValueError("Invalid organization metadata. Must include 'id'.")
 
     successful_count = 0  # Initialize the count of successfully stored embeddings
     print("Sentence Count1:", len(sentences))
@@ -125,7 +122,7 @@ async def process_sentences_and_store(
                 embedding_entry = OrgDataEmbedding(
                     metaData={"sentence": current_sentence},
                     embedding=embedding,
-                    org_id=org_meta["id"],
+                    org_id=org_id
                 )
 
                 session.add(embedding_entry)

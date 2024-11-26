@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, HttpUrl
 from contextlib import asynccontextmanager
 from db.actions.vectors import get_similar_vectors
 from db.actions.web_scrapper import list_webscraps, save_webscrap
+from db.actions.embeddings import save_embeddings
 from llm.OllamaService import ollama_client
 from llm.ChatHistory import ChatHistory
 import json
@@ -45,7 +46,9 @@ async def scrap_website(scrap_model: ScrapModel, session: UserSession):
     crawler = WebCrawler(str(scrap_model.base_url), depth=scrap_model.depth, max_pages=scrap_model.max_pages)
     crawler.crawl()
     data = crawler.save_results()
-    save_webscrap(data, session)
+    org_data = save_webscrap(data, session)
+    print("data: ", data)
+    await save_embeddings(org_data, session)
     return {"message": "Crawling completed successfully"}
 
 @app.post("/chat")

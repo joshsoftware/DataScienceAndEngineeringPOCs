@@ -1,8 +1,9 @@
 from src.embeddings.service import EmbeddingService
 from db.index import UserSession
+from db.schema import Orgnization
 
 
-def save_embeddings(data: dict, session: UserSession, org_meta: dict) -> None:
+async def save_embeddings(data: Orgnization, session: UserSession) -> None:
     """
     Process the file to generate embeddings and associate them with the given organization metadata.
     
@@ -13,4 +14,5 @@ def save_embeddings(data: dict, session: UserSession, org_meta: dict) -> None:
     """
     # Step: Call the EmbeddingService to process the file and generate embeddings
     embedding_service = EmbeddingService()
-    embedding_service.process_file(data['filePath'], session, org_meta)
+    print(data)
+    await embedding_service.process_file(data.filePath, session, data.id)
