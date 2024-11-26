@@ -28,7 +28,7 @@ async def ollama_client(query: str, session: UserSession) -> AsyncGenerator[dict
     try:
         client = AsyncClient()
         async for chunk in await client.chat(
-            model='llama2',  
+            model='llama3.2',  
             messages=messages,
             stream=True
         ):

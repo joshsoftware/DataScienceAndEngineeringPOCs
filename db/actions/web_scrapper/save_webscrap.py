@@ -1,9 +1,9 @@
-from db.schema import ScrapData
+from db.schema import Orgnization
 from db.index import UserSession
 
 
-def save_webscrap(data: dict, session: UserSession) -> ScrapData:   
-    scrap_data = ScrapData(
+def save_webscrap(data: dict, session: UserSession) -> Orgnization:   
+    scrap_data = Orgnization(
         websiteUrl=data['websiteUrl'],
         websiteDepth=data['websiteDepth'],
         websiteMaxNumberOfPages=data['websiteMaxNumberOfPages'],
