@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from data_source.webscraper.index import WebCrawler
 from db.index import create_db_and_tables, UserSession
 from pydantic import BaseModel, Field, HttpUrl
@@ -31,6 +32,20 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+# Add CORS middleware
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/web-scrap/")
 async def get_webscrap(session: UserSession):
