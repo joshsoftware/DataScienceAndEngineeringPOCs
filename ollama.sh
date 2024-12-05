@@ -95,7 +95,7 @@ exit_ollama() {
 # Function to chat with Ollama
 chat_ollama() {
     local message=$1
-    local model="llama2" 
+    local model="llama3" 
     response=$(curl -s -X POST http://localhost:11434/api/chat -d "{\"message\": \"$message\", \"model\": \"$model\"}" -H "Content-Type: application/json")
     if echo "$response" | grep -q "error"; then
         print_message "$RED" "Failed to send message to Ollama: $response"
