@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const page = async () => {
   const { user } = await validateRequest();
 
-  if (!user) return redirect("/signin");
+  if (!user) return redirect("/admin/signin");
 
   return (
     <div className="flex flex-col w-full pt-8">

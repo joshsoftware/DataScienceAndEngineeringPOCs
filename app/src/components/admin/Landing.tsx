@@ -23,7 +23,7 @@ const Landing = () => {
           </p>
          <div className="w-full flex gap-3">
         <Link
-          href={"/signin"}
+          href={"/admin/signin"}
           className={buttonVariants({
             className: "!bg-[#3f51b5] !hover:bg-[#303f9f] text-white",
           })}

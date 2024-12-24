@@ -51,7 +51,6 @@ export const useUser = () => {
       mutationKey: ["signin-user"],
       mutationFn: async (payload: LoginUserRequest) => {
         const response = await axios.post("/admin/api/signin", payload);
-        console.log(response);
         return response.data;
       },
       onSuccess: async (res) => {
