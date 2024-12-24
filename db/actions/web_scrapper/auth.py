@@ -29,12 +29,11 @@ def login(data: UserLoginModel, session: UserSession) -> UserDetails:
         if user is None:
             raise HTTPException(status_code=400, detail="Use not found...")
         
-        # if not verify_password(data.password, user.hashed_password):
-        #     raise HTTPException(
-        #         status_code=400, 
-        #         detail="Wrong Email or Password"
-        #     )
-        # return {f"lll {user}"}
+        if not verify_password(data.password, user.hashed_password):
+            raise HTTPException(
+                status_code=400, 
+                detail="Wrong Email or Password"
+            )
 
         access = create_access_token(user)
         refresh = create_refresh_token(user)
