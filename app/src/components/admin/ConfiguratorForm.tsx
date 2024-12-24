@@ -20,6 +20,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import options from "../../staticData/dropdownOptions"
 
 const ConfiguratorForm = () => {
 
@@ -47,18 +48,6 @@ const ConfiguratorForm = () => {
   });
 
   const { handleSubmit, setValue } = form;
-
-  const options = [
-    { value: 1, label: "1" },
-    { value: 2, label: "2" },
-    { value: 3, label: "3" },
-  ];
-
-  const frequencies = [
-    { value: 5, label: "5 Days" },
-    { value: 15, label: "15 Days" },
-    { value: 30, label: "30 Days" },
-  ];
 
   const handleSelectDepth = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setValue("depth", parseInt(event.target.value, 10));
@@ -214,7 +203,7 @@ const ConfiguratorForm = () => {
                           <Dropdown
                             disabled={disableFields}
                             value={field.value}
-                            options={options}
+                            options={options.maxPages}
                             placeHolder="Enter Max Pages"
                             onChange={handleSelectPages}
                           />
@@ -236,7 +225,7 @@ const ConfiguratorForm = () => {
                           <Dropdown
                             disabled={disableFields}
                             value={field.value}
-                            options={options}
+                            options={options.depthLevel}
                             placeHolder="Select Depth"
                             onChange={handleSelectDepth}
                           />
@@ -258,7 +247,7 @@ const ConfiguratorForm = () => {
                           <Dropdown
                             disabled={disableFields}
                             value={field.value}
-                            options={frequencies}
+                            options={options.frequencies}
                             placeHolder="Select Frequency"
                             onChange={handleSelectFrequency}
                           />
