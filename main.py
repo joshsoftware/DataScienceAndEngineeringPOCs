@@ -1,23 +1,26 @@
-from fastapi import FastAPI
+from db.actions.web_scrapper.model.user import ScrapModel, UserLoginModel, UserModel
+from db.actions.web_scrapper.model.organization import ScrapModel
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.exc import SQLAlchemyError
 from data_source.webscraper.index import WebCrawler
 from db.index import create_db_and_tables, UserSession
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field
 from contextlib import asynccontextmanager
 from db.actions.vectors import get_similar_vectors
-from db.actions.web_scrapper import list_webscraps, save_webscrap
-from db.actions.embeddings import save_embeddings
+from db.actions.web_scrapper import list_webscraps, save_webscrap, auth, users, organization
+#from db.actions.embeddings import save_embeddings
 from llm.OllamaService import ollama_client
 from llm.ChatHistory import ChatHistory
 import json
 
 
 from typing import List, AsyncGenerator
-class ScrapModel(BaseModel):
-    base_url: HttpUrl = Field(..., example="https://example.com")
-    depth: int = Field(..., ge=1, le=10, example=3)
-    max_pages: int = Field(..., gt=0, example=2)
+# class ScrapModel(BaseModel):
+#     base_url: HttpUrl = Field(..., example="https://example.com")
+#     depth: int = Field(..., ge=1, le=10, example=3)
+#     max_pages: int = Field(..., gt=0, example=2)
 
 class VectorQueryModel(BaseModel):
     query_vector: List[float] = Field(..., example=[0.1, 0.2, 0.3])
@@ -31,7 +34,7 @@ async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan,debug=True)
 
 # Add CORS middleware
 origins = [
@@ -63,7 +66,7 @@ async def scrap_website(scrap_model: ScrapModel, session: UserSession):
     data = crawler.save_results()
     org_data = save_webscrap(data, session)
     print("data: ", data)
-    await save_embeddings(org_data, session)
+    #await save_embeddings(org_data, session)
     return {"message": "Crawling completed successfully"}
 
 @app.post("/chat")
@@ -107,3 +110,65 @@ async def chat_endpoint(request: ChatModel, session: UserSession):
             "Transfer-Encoding": "chunked"
         }
     )
+
+@app.post("/register")
+async def add_user(user_model: UserModel, session: UserSession):
+    try:
+        user = users.register_user(user_model, session)
+        print("data: saved", user)
+        return {"message": "Registration completed successfully", "data": user}
+    
+    except HTTPException as e:
+        print(f"HTTPException: {e}")
+        raise e
+    
+    except SQLAlchemyError as e:
+        print(f"SQLAlchemyError: {e}")
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Database operation failed. Please try again : {e}")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
+
+    finally:
+        session.close()
+        print("a")
+
+@app.post("/login")
+async def login_user(user_data: UserLoginModel, session: UserSession):
+    try:
+        user = auth.login(user_data, session)
+        return {"message": "logged in completed successfully", "data": user}
+    
+    except HTTPException as e:
+        print(f"HTTPException: {e}")
+        raise e
+    
+    except SQLAlchemyError as e:
+        print(f"SQLAlchemyError: {e}")
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Database operation failed. Please try again : {e}")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
+
+@app.post("/register-organization")
+async def register_org(user_model: ScrapModel, session: UserSession):
+    try:
+        org = organization.register_organization(user_model, session)
+        return {"message": "Organization Registration completed successfully", "data": org}
+    
+    except HTTPException as e:
+        print(f"HTTPException: {e}")
+        raise e
+    
+    except SQLAlchemyError as e:
+        print(f"SQLAlchemyError: {e}")
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Database operation failed. Please try again : {e}")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
+
+    finally:
+        session.close()
