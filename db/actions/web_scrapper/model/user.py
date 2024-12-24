@@ -21,3 +21,12 @@ class ScrapModel(BaseModel):
     frequency: int = Field(..., gt=0, example=2)
     user: int = Field(..., example=2)
     
+class GetOrgModel(BaseModel):
+    domain: str = Field(..., example="https://example.com")
+
+class UpdateOrgnizationModel(BaseModel):
+    url: str = None
+    domain: str = None
+    max_pages: int = None
+    depth: int = None
+    frequency: int = None

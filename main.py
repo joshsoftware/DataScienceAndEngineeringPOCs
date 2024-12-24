@@ -1,5 +1,6 @@
-from db.actions.web_scrapper.model.user import ScrapModel, UserLoginModel, UserModel
+from db.actions.web_scrapper.model.user import GetOrgModel, ScrapModel, UpdateOrgnizationModel, UserLoginModel, UserModel
 from db.actions.web_scrapper.model.organization import ScrapModel
+from db.schema import Orgnization
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -157,6 +158,49 @@ async def register_org(user_model: ScrapModel, session: UserSession):
     try:
         org = organization.register_organization(user_model, session)
         return {"message": "Organization Registration completed successfully", "data": org}
+    
+    except HTTPException as e:
+        print(f"HTTPException: {e}")
+        raise e
+    
+    except SQLAlchemyError as e:
+        print(f"SQLAlchemyError: {e}")
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Database operation failed. Please try again : {e}")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
+
+    finally:
+        session.close()
+
+@app.put("/organization/{organization_domain}", response_model=Orgnization)
+async def update_organization(organization_domain: str, data: UpdateOrgnizationModel, session: UserSession):
+    try:
+        org = update_organization(organization_domain, data, session)
+        return {"message": "Organization updated completed successfully", "data": org}
+    
+    except HTTPException as e:
+        print(f"HTTPException: {e}")
+        raise e
+    
+    except SQLAlchemyError as e:
+        print(f"SQLAlchemyError: {e}")
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Database operation failed. Please try again : {e}")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
+
+    finally:
+        session.close()
+
+
+@app.get("/organization/{organization_domain}")
+async def get_organization(organization_domain: str, session: UserSession):
+    try:
+        org = organization.get_organization(organization_domain, session)
+        return {"message": "Organization data", "data": org}
     
     except HTTPException as e:
         print(f"HTTPException: {e}")
