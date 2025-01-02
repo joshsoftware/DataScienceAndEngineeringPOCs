@@ -80,6 +80,7 @@ const Chat = ({
       },
       body: JSON.stringify({
         message: text,
+        organization_id: process.env.ORG_ID,
       }),
     });
 
@@ -97,7 +98,6 @@ const Chat = ({
         if (!chunkValue) {
           return
         }
-
         const jsonResponse = JSON.parse(chunkValue);
 
         if (jsonResponse.isFinished) {

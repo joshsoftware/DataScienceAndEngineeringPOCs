@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
 import { Loader2 } from "lucide-react";
 import * as React from "react";
@@ -43,7 +42,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, children, variant, isLoading, size, ...props }, ref) => {
     return (
       <button
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={`${buttonVariants({ variant, size })} ${className || ''}`}
         ref={ref}
         disabled={isLoading}
         {...props}

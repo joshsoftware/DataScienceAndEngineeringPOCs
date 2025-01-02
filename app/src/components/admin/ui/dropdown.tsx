@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 export interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { value: number; label: string }[];
@@ -25,15 +24,16 @@ const Dropdown = React.forwardRef<HTMLSelectElement, DropdownProps>(
     };
 
     return (
+      <>
       <div className="relative w-full">
         <select
         disabled={disabled}
           value={selectedOption}
           onChange={handleSelectChange}
-          className={cn(
+          className={`
             "flex h-9 w-full rounded-md border border-input px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-            className
-          )}
+            ${className || ''}`
+          }
           // ref={ref}
           // {...props}
         >
@@ -47,6 +47,7 @@ const Dropdown = React.forwardRef<HTMLSelectElement, DropdownProps>(
           ))}
         </select>
       </div>
+      </>
     );
   }
 );

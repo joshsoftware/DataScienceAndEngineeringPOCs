@@ -1,6 +1,5 @@
 "use client";
 import { primaryFont } from "@/fonts";
-import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
@@ -57,10 +56,10 @@ const Header =  () => {
 
   return (
     <header
-      className={cn(
-        "flex justify-between items-center bg-[#ffffff] border-b-2",
-        primaryFont.className
-      )}
+      className={
+        `flex justify-between items-center bg-[#ffffff] border-b-2,
+        ${primaryFont.className}`
+      }
     >
       <div className="container flex items-center py-3">
         <Link href={"/admin"} className="text-3xl text-black">

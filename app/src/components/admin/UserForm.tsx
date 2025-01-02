@@ -1,7 +1,6 @@
 "use client";
 
 import { tertiaryFont } from "@/fonts";
-import { cn } from "@/lib/utils";
 import { Input } from "./ui/input";
 import { Button, buttonVariants } from "./ui/button";
 import {
@@ -208,13 +207,10 @@ const UserForm = (props: UserFormProps) => {
         <Link
           href={formType === "signup" ? "/admin/signin" : "/admin/signup"}
           aria-disabled={disableSubmit || isPending}
-          className={cn(
-            disableSubmit || isPending ? 'pointer-events-none' : '',
-            buttonVariants({
-              variant: "link",
-              className: "text-[#668D7E] hover:text-[#668D7E] font-bold"
-            }
-            ))}
+          className={`${disableSubmit || isPending ? 'pointer-events-none' : ''} ${buttonVariants({
+            variant: "link",
+            className: "text-[#668D7E] hover:text-[#668D7E] font-bold"
+          })}`}
         >
           {formType === "signup" ? "Sign In" : "Sign Up"}
         </Link>
