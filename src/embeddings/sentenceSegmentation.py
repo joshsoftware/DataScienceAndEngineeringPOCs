@@ -125,3 +125,15 @@ class SentenceSegmentationService:
         sentences = [item for sublist in processed_content for item in sublist]
         
         return sentences
+
+    def extract_keywords(self, sentence):
+        nlp = spacy.load("en_core_web_sm")
+        doc = nlp(sentence)
+        keywords = set()
+        for token in doc:
+            if token.pos_ in {"NOUN", "PROPN"}:
+                keywords.add(token.text)
+        for ent in doc.ents:
+            keywords.add(ent.text)
+
+        return list(keywords)

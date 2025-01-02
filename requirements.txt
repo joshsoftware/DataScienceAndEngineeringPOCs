@@ -11,3 +11,7 @@ spacy>=3.8.2
 transformers>=4.46.3
 numpy>=2.0
 scikit-learn
+python-jose
+passlib
+bcrypt
+numpy

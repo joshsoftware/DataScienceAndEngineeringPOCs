@@ -35,5 +35,5 @@ class Orgnization(SQLModel, table=True):
 class OrgDataEmbedding(SQLModel, table=True):
     id: int = Field(default=None, sa_column=Column(Integer, primary_key=True, autoincrement=True))
     metaData: dict = Field(sa_column=Column(JSON))
-    #embedding: Any = Field(sa_column=Column(Vector(1024)))
+    embedding: Any = Field(sa_column=Column(Vector(1024)))
     org_id: int = Field(default=None, foreign_key="orgnization.id")

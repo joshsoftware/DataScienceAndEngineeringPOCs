@@ -1,7 +1,7 @@
 from db.actions.web_scrapper.model.user import GetOrgModel, ScrapModel, UpdateOrgnizationModel, UserLoginModel, UserModel
 from db.actions.web_scrapper.model.organization import ScrapModel
 from db.schema import Orgnization
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from contextlib import asynccontextmanager
 from db.actions.vectors import get_similar_vectors
 from db.actions.web_scrapper import list_webscraps, save_webscrap, auth, users, organization
-#from db.actions.embeddings import save_embeddings
+from db.actions.embeddings import save_embeddings
 from llm.OllamaService import ollama_client
 from llm.ChatHistory import ChatHistory
 import json
@@ -29,6 +29,7 @@ class VectorQueryModel(BaseModel):
     
 class ChatModel(BaseModel):
     message: str = Field(..., example="Hello, Ollama!")
+    organization_id: int =  Field(..., example=1)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -61,20 +62,23 @@ async def vector_query(session: UserSession):
     return results
 
 @app.post("/web-scrap/")
-async def scrap_website(scrap_model: ScrapModel, session: UserSession):
-    crawler = WebCrawler(str(scrap_model.base_url), depth=scrap_model.depth, max_pages=scrap_model.max_pages)
+async def scrap_website(organization_domain: str, session: UserSession, background_tasks: BackgroundTasks):
+    print("Org domain", organization_domain)
+    org = organization.get_organization(organization_domain, session)
+    crawler = WebCrawler(str(org.websiteUrl), depth=org.websiteDepth, max_pages=org.websiteMaxNumberOfPages)
     crawler.crawl()
     data = crawler.save_results()
-    org_data = save_webscrap(data, session)
+    data['id'] = org.id
     print("data: ", data)
-    #await save_embeddings(org_data, session)
+    await save_embeddings(data, session)
     return {"message": "Crawling completed successfully"}
 
 @app.post("/chat")
 async def chat_endpoint(request: ChatModel, session: UserSession):
     async def response_stream() -> AsyncGenerator[bytes, None]:
         buffer = ""
-        async for chunk in ollama_client(request.message, session):
+        async for chunk in ollama_client(request.message, request.organization_id, session):
+            print("chunk", chunk)
             if chunk and 'message' in chunk and 'content' in chunk['message']:
                 # Accumulate content in buffer
                 buffer += chunk['message']['content']
@@ -97,7 +101,7 @@ async def chat_endpoint(request: ChatModel, session: UserSession):
         else:
             # Send final empty message with isFinished flag if buffer is empty
             response_json = {
-                "content": "",
+                "content": "1",
                 "isFinished": True
             }
             yield f"{json.dumps(response_json)}\n".encode('utf-8')

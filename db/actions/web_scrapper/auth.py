@@ -14,12 +14,13 @@ from sqlalchemy.exc import SQLAlchemyError
 
 load_dotenv()
 
-ACCESS_TOKEN_EXPIRE_MINUTES =os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
-REFRESH_TOKEN_EXPIRE_MINUTES =os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES")
+ACCESS_TOKEN_EXPIRE_MINUTES =os.getenv("30")
+REFRESH_TOKEN_EXPIRE_MINUTES =os.getenv("300")
 ALGORITHM =os.getenv("ALGORITHM")
 JWT_SECRET_KEY =os.getenv("JWT_SECRET_KEY")
 JWT_REFRESH_SECRET_KEY =os.getenv("JWT_REFRESH_SECRET_KEY")
 
+print("ENV: ", ACCESS_TOKEN_EXPIRE_MINUTES)
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -70,7 +71,7 @@ def create_access_token(subject: Union[str, Any], expires_delta: int = None) -> 
         expires_delta = datetime.now(timezone.utc) + expires_delta
         
     else:
-        expires_delta = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
+        expires_delta = datetime.now(timezone.utc) + timedelta(minutes=int('30'))
          
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, ALGORITHM)
@@ -81,7 +82,7 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) ->
     if expires_delta is not None:
         expires_delta = datetime.now(timezone.utc) + expires_delta
     else:
-        expires_delta = datetime.now(timezone.utc) + timedelta(minutes=int(REFRESH_TOKEN_EXPIRE_MINUTES))
+        expires_delta = datetime.now(timezone.utc) + timedelta(minutes=int("300"))
     
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, ALGORITHM)

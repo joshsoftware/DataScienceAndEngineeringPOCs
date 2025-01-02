@@ -12,7 +12,9 @@ async def save_embeddings(data: Orgnization, session: UserSession) -> None:
     :param org_meta: Organization metadata to associate with the embeddings
     :return: None
     """
+
+    print("Parameters", data)
     # Step: Call the EmbeddingService to process the file and generate embeddings
     embedding_service = EmbeddingService()
     print(data)
-    await embedding_service.process_file(data.filePath, session, data.id)
+    await embedding_service.process_file(data['filePath'], session, data.get('id'))
